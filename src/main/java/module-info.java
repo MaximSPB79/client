@@ -1,6 +1,8 @@
 module gb.safronov.client {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
+    requires lombok;
 
 
     opens gb.client to javafx.fxml;

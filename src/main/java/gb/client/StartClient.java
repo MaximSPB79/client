@@ -54,8 +54,6 @@ public class StartClient extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(StartClient.class.getResource("chat-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         primaryStage.setScene(scene);
-        primaryStage.setY(1400);
-        primaryStage.setX(650);
         primaryStage.setAlwaysOnTop(true);
 //        stage.show();
 
