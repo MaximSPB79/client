@@ -55,7 +55,7 @@ public class StartClient extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         primaryStage.setScene(scene);
         primaryStage.setAlwaysOnTop(true);
-//        stage.show();
+
 
         chatController = fxmlLoader.getController();
 

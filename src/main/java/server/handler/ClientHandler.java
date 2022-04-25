@@ -1,6 +1,7 @@
 package server.handler;
 
 import server.MyServer;
+import server.Story;
 import server.authentication.AuthenticationService;
 
 import java.io.DataInputStream;
@@ -31,6 +32,7 @@ public class ClientHandler {
     private DataOutputStream out;
     private DataInputStream in;
     private String username;
+    Story story = new Story(this);
 
     public ClientHandler(MyServer myServer, Socket socket) {
 
@@ -39,12 +41,14 @@ public class ClientHandler {
     }
 
     public void handle() throws IOException {
+        // для клиента создаем потоки входа и выхода данных
         out = new DataOutputStream(clientSocket.getOutputStream());
         in = new DataInputStream(clientSocket.getInputStream());
 
         new Thread(() -> {
             try {
                 sign();
+                story.loadHistory();
                 readMessage();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -66,10 +70,8 @@ public class ClientHandler {
                 if (isSuccessAuth) {
                     break;
                 }
-
             } else if (message.startsWith(REG_CMD_PREFIX)) {
                 processSignUp(message);
-
             } else {
                 out.writeUTF(AUTHERR_CMD_PREFIX + " Ошибка аутентификации");
                 System.out.println("Неудачная попытка аутентификации");
@@ -94,11 +96,8 @@ public class ClientHandler {
                 out.writeUTF(AUTHERR_CMD_PREFIX + " Логин уже используется");
                 return false;
             }
-
             out.writeUTF(AUTHOK_CMD_PREFIX + " " + username);
-
             connectUser(username);
-
             return true;
         } else {
             out.writeUTF(AUTHERR_CMD_PREFIX + " Логин или пароль не соответствуют действительности");
@@ -116,7 +115,6 @@ public class ClientHandler {
         String username = parts[3];
 
         AuthenticationService auth = myServer.getAuthenticationService();
-
 
         if (auth.checkLoginByFree(login)) {
             auth.createUser(login, password, username);
@@ -137,7 +135,8 @@ public class ClientHandler {
     private void readMessage() throws IOException {
         while (true) {
             String message = in.readUTF();
-            System.out.println("message | " + username + ": " + message);
+            System.out.println(getX(message));
+            story.saveHistory(getX(message));
             if (message.startsWith(STOP_SERVER_CMD_PREFIX)) {
                 System.exit(0);
             } else if (message.startsWith(END_CLIENT_CMD_PREFIX)) {
@@ -146,18 +145,20 @@ public class ClientHandler {
                 String[] parts = message.split("\\s+", 3);
                 String recipient = parts[1];
                 String privateMessage = parts[2];
-
                 myServer.sendPrivateMessage(this, recipient, privateMessage);
-            } else if(message.startsWith(CHANGE_USERNAME_PREFIX)) {
+            } else if (message.startsWith(CHANGE_USERNAME_PREFIX)) {
                 String[] parts = message.split("\\s+", 3);
                 String username = parts[1];
                 String newUsername = parts[2];
                 myServer.changeUsername(this, newUsername);
-            }else {
+            } else {
                 myServer.broadcastMessage(message, this);
             }
-
         }
+    }
+
+    private String getX(String message) {
+        return "message | " + username + ": " + message;
     }
 
     public void sendMessage(String sender, String message) throws IOException {
@@ -189,5 +190,13 @@ public class ClientHandler {
     @Override
     public String toString() {
         return username;
+    }
+
+    public DataOutputStream getOut() {
+        return out;
+    }
+
+    public DataInputStream getIn() {
+        return in;
     }
 }
