@@ -18,6 +18,14 @@ public class ChatController {
     @FXML
     private Label usernameTitle;
 
+    public void setChatHistory() {
+        this.chatHistory = chatHistory;
+    }
+
+    public TextArea getChatHistory() {
+        return chatHistory;
+    }
+
     @FXML
     private TextArea chatHistory;
 
@@ -30,7 +38,6 @@ public class ChatController {
 
     @FXML
     public void initialize() {
-//        usersList.setItems(FXCollections.observableArrayList("Тимофей", "Дмитрий", "Диана", "Арман"));
         sendButton.setOnAction(event -> sendMessage());
         inputField.setOnAction(event -> sendMessage());
 

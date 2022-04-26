@@ -52,6 +52,7 @@ public class Network {
 
     public void connect() {
         try {
+            // создаем сокет клиента и входные и выходные потоки
             Socket socket = new Socket(host, port);
 
             in = new DataInputStream(socket.getInputStream());
@@ -77,12 +78,10 @@ public class Network {
                       String[] parts = message.split("\\s+", 3);
                       String sender = parts[1];
                       String messageFromSender = parts[2];
-
                       Platform.runLater(() -> chatController.appendMessage(String.format("%s: %s", sender, messageFromSender)));
                   } else if (message.startsWith(SERVER_MSG_CMD_PREFIX)) {
                       String[] parts = message.split("\\s+", 2);
                       String serverMessage = parts[1];
-
                       Platform.runLater(() -> chatController.appendServerMessage(serverMessage));
                   } else if (message.startsWith(GET_CLIENTS_CMD_PREFIX)) {
                       message = message.substring(message.indexOf('[') + 1, message.indexOf(']'));
@@ -94,7 +93,6 @@ public class Network {
                e.printStackTrace();
            }
        });
-
        t.setDaemon(true);
        t.start();
 
@@ -152,7 +150,6 @@ public class Network {
 
     public void sendChangeUsernameMessage(String message) {
         String newUsername = message.split("\s+")[1];
-
         sendMessage(String.format("%s %s %s", CHANGE_USERNAME_PREFIX, username, newUsername));
     }
 }
