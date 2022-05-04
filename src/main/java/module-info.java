@@ -3,6 +3,7 @@ module gb.safronov.client {
     requires javafx.fxml;
     requires java.sql;
     requires lombok;
+    requires java.desktop;
 
 
     opens gb.client to javafx.fxml;

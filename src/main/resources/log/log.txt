@@ -1,0 +1,12 @@
+Apr 29, 2022 4:53:10 PM server.MyServer start
+SEVERE: Сервер запущен
+Apr 29, 2022 4:53:10 PM server.MyServer waitAndProcessNewClientConnection
+SEVERE: Ожидаем подключения клиента
+Apr 29, 2022 4:53:16 PM server.MyServer waitAndProcessNewClientConnection
+SEVERE: Клиент подключился
+Apr 29, 2022 4:53:16 PM server.MyServer waitAndProcessNewClientConnection
+SEVERE: Ожидаем подключения клиента
+Apr 29, 2022 4:53:39 PM server.MyServer waitAndProcessNewClientConnection
+SEVERE: Клиент подключился
+Apr 29, 2022 4:53:39 PM server.MyServer waitAndProcessNewClientConnection
+SEVERE: Ожидаем подключения клиента

@@ -1,0 +1,8 @@
+Apr 29, 2022 4:53:29 PM server.handler.ClientHandler connectUser
+SEVERE: Пользователь Max подключился к чату
+Apr 29, 2022 4:53:48 PM server.handler.ClientHandler connectUser
+SEVERE: Пользователь Lena подключился к чату
+Apr 29, 2022 4:54:07 PM server.handler.ClientHandler readMessage
+SEVERE: Lena отправил приватное сообщение
+Apr 29, 2022 4:54:09 PM server.handler.ClientHandler readMessage
+SEVERE: Lena отправил приватное сообщение
