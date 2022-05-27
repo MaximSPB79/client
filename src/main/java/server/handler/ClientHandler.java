@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import java.util.logging.*;
 
 public class ClientHandler {
     private static final String AUTH_CMD_PREFIX = "/auth"; // + login + password
@@ -32,10 +33,16 @@ public class ClientHandler {
     private DataOutputStream out;
     private DataInputStream in;
     private String username;
+    private Logger log = Logger.getLogger("chatLoggerHendler");
+    Handler handler = new FileHandler("src/main/resources/log/logHendler.txt");
     Story story = new Story(this);
 
-    public ClientHandler(MyServer myServer, Socket socket) {
 
+    public ClientHandler(MyServer myServer, Socket socket) throws IOException {
+        handler.setLevel(Level.ALL);
+        handler.setFormatter(new SimpleFormatter());
+        log.setLevel(Level.SEVERE);
+        log.addHandler(handler);
         this.myServer = myServer;
         clientSocket = socket;
     }
@@ -52,11 +59,13 @@ public class ClientHandler {
                 readMessage();
             } catch (IOException e) {
                 e.printStackTrace();
+                log.severe(e.getMessage());
                 myServer.unSubscribe(this);
                 try {
                     myServer.broadcastClientDisconnected(this);
                 } catch (IOException ex) {
                     ex.printStackTrace();
+                    log.severe(ex.getMessage());
                 }
             }
         }).start();
@@ -75,6 +84,7 @@ public class ClientHandler {
             } else {
                 out.writeUTF(AUTHERR_CMD_PREFIX + " Ошибка аутентификации");
                 System.out.println("Неудачная попытка аутентификации");
+                log.info("Неудачная попытка аутентификации");
             }
         }
     }
@@ -129,6 +139,7 @@ public class ClientHandler {
     private void connectUser(String username) throws IOException {
         myServer.subscribe(this);
         System.out.println("Пользователь " + username + " подключился к чату");
+        log.severe("Пользователь " + username + " подключился к чату");
         myServer.broadcastClients(this);
     }
 
@@ -138,6 +149,7 @@ public class ClientHandler {
             System.out.println(getX(message));
             story.saveHistory(getX(message));
             if (message.startsWith(STOP_SERVER_CMD_PREFIX)) {
+                log.severe("Сервер остановлен");
                 System.exit(0);
             } else if (message.startsWith(END_CLIENT_CMD_PREFIX)) {
                 return;
@@ -146,6 +158,7 @@ public class ClientHandler {
                 String recipient = parts[1];
                 String privateMessage = parts[2];
                 myServer.sendPrivateMessage(this, recipient, privateMessage);
+                log.severe(this + " отправил приватное сообщение");
             } else if (message.startsWith(CHANGE_USERNAME_PREFIX)) {
                 String[] parts = message.split("\\s+", 3);
                 String username = parts[1];

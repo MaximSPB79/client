@@ -9,14 +9,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.*;
 
 public class MyServer {
     private final ServerSocket serverSocket;
     private final AuthenticationService authenticationService;
     private final List<ClientHandler> clients;
+    Logger log = Logger.getLogger("chatLogger");
+    Handler handler = new FileHandler("src/main/resources/log/log.txt");
 
 
     public MyServer(int port) throws IOException {
+        handler.setLevel(Level.ALL);
+        handler.setFormatter(new SimpleFormatter());
+        log.setLevel(Level.SEVERE);
+        log.addHandler(handler);
         // создаем экземпляр сокета
         serverSocket = new ServerSocket(port);
         // создаем экземпляр аутентификации, который хранит логины и пароли пользователей с данными из класса
@@ -30,7 +37,7 @@ public class MyServer {
         authenticationService.startAuthentication();
         System.out.println("СЕРВЕР ЗАПУЩЕН!");
         System.out.println("----------------");
-
+        log.severe("Сервер запущен");
         try {
             // запускаем бесконечный цикл по ожиданию клиента
             while (true) {
@@ -38,6 +45,7 @@ public class MyServer {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            log.warning(e.getMessage());
         } finally {
             authenticationService.endAuthentication();
         }
@@ -45,9 +53,11 @@ public class MyServer {
 
     private void waitAndProcessNewClientConnection() throws IOException {
         System.out.println("Ожидание клиента...");
+        log.severe("Ожидаем подключения клиента");
         // создается сокет клиента, поймав сокет
         Socket socket = serverSocket.accept();
         System.out.println("Клиент подключился!");
+        log.severe("Клиент подключился");
 
         processClientConnection(socket);
     }
@@ -78,6 +88,7 @@ public class MyServer {
             }
         }
         return false;
+
     }
 
     public AuthenticationService getAuthenticationService() {
